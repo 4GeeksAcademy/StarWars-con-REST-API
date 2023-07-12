@@ -105,5 +105,5 @@ class Planets(db.Model):
 #     __tablename__ = 'Favoritos'
 #     id = db.Column(db.Integer, primary_key=True)
 #     people_id = db.Column(db.Integer, db.ForeignKey("People.id"), nullable=False)
-#     planets_id = db.Column(db.Integer, db.ForeignKey("Planets.id"), nullable=False)
+#     user_id = db.Column(db.Integer, db.ForeignKey("User.id"), nullable=False)
 #     creation_date = db.Column(db.DateTime, nullable=False)
