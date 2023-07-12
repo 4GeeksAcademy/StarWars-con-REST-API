@@ -13,7 +13,8 @@ class User(db.Model):
     creation_date = db.Column(db.DateTime, nullable=False)
     people = db.relationship('People', backref="User", lazy=True)
     planets = db.relationship('Planets', backref="User", lazy=True)
-
+    favoritos_people = db.relationship('FavoritosPeople', backref="User", lazy=True)
+    favoritos_planets = db.relationship('FavoritosPlanets', backref="User", lazy=True)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -35,6 +36,7 @@ class People(db.Model):
     homeworld = db.Column(db.String(120), nullable=False)
     creation_date = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("User.id"), nullable=False)
+    favoritos_people = db.relationship('FavoritosPeople', backref="People", lazy=True)
 
     def __init__(self, name, description, gender, birth_year, homeworld, user_id):
         self.name = name
@@ -72,6 +74,8 @@ class Planets(db.Model):
     diameter = db.Column(db.String(120), nullable=False)
     creation_date = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("User.id"), nullable=False)
+    favoritos_planets = db.relationship('FavoritosPlanets', backref="Planets", lazy=True)
+
 
     def __init__(self, name, description, climate, terrain, population, gravity, diameter, user_id):
         self.name = name
@@ -101,9 +105,16 @@ class Planets(db.Model):
             "creation_date": self.creation_date,
         }
 
-# class Favoritos(db.Model):
-#     __tablename__ = 'Favoritos'
-#     id = db.Column(db.Integer, primary_key=True)
-#     people_id = db.Column(db.Integer, db.ForeignKey("People.id"), nullable=False)
-#     user_id = db.Column(db.Integer, db.ForeignKey("User.id"), nullable=False)
-#     creation_date = db.Column(db.DateTime, nullable=False)
+class FavoritosPeople(db.Model):
+    __tablename__ = 'FavoritosPeople'
+    id = db.Column(db.Integer, primary_key=True)
+    people_id = db.Column(db.Integer, db.ForeignKey("People.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("User.id"), nullable=False)
+    creation_date = db.Column(db.DateTime, nullable=False)
+
+class FavoritosPlanets(db.Model):
+    __tablename__ = 'FavoritosPlanets'
+    id = db.Column(db.Integer, primary_key=True)
+    planets_id = db.Column(db.Integer, db.ForeignKey("Planets.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("User.id"), nullable=False)
+    creation_date = db.Column(db.DateTime, nullable=False)

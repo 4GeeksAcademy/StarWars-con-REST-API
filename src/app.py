@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, People, Planets
+from models import db, User, People, Planets, FavoritosPlanets, FavoritosPeople
 #from models import Person
 
 app = Flask(__name__)
@@ -65,6 +65,21 @@ def get_planets():
     all_planets = Planets.query.all()
     print(all_planets)
     return jsonify([planet.serialize() for planet in all_planets]), 200
+
+@app.route('/new-people', methods=['POST'])
+# @jwt_required()
+def new_people():
+    body = request.json  # lo que viene del request como un dic de python 🦎
+    try:
+        new_people = People(body['name'], body['description'], body['gender'],
+                            body['birth_year'], body['homeworld'], body['user_id'])
+      
+        print(new_people)
+        db.session.add(new_people)  # Memoria RAM de SQLAlchemy
+        db.session.commit()
+        return jsonify(new_people.serialize()), 200
+    except Exception as err:
+        return jsonify({"message": "Ah ocurrido un error inesperado ‼️" + str(err)}), 500
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
