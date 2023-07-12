@@ -46,52 +46,47 @@ def handle_hello():
     return jsonify(response_body), 200
 
 @app.route('/user', methods=['GET'])
-# @jwt_required()
 def get_users():
     all_users = User.query.all()
     print(all_users)
     return jsonify([user.serialize() for user in all_users]), 200
 
 @app.route('/people', methods=['GET'])
-# @jwt_required()
 def get_people():
     all_people = People.query.all()
     print(all_people)
     return jsonify([people.serialize() for people in all_people]), 200
 
 @app.route('/planets', methods=['GET'])
-# @jwt_required()
 def get_planets():
     all_planets = Planets.query.all()
     print(all_planets)
     return jsonify([planet.serialize() for planet in all_planets]), 200
 
 @app.route('/new-people', methods=['POST'])
-# @jwt_required()
 def new_people():
-    body = request.json  # lo que viene del request como un dic de python 🦎
+    body = request.json  
     try:
         new_people = People(body['name'], body['description'], body['gender'],
                             body['birth_year'], body['homeworld'], body['user_id'])
       
         print(new_people)
-        db.session.add(new_people)  # Memoria RAM de SQLAlchemy
+        db.session.add(new_people)  
         db.session.commit()
         return jsonify(new_people.serialize()), 200
     except Exception as err:
         return jsonify({"message": "Ah ocurrido un error inesperado ‼️" + str(err)}), 500
     
 @app.route('/new-planet', methods=['POST'])
-# @jwt_required()
 def new_planet():
-    body = request.json  # lo que viene del request como un dic de python 🦎
+    body = request.json  
     try:
         new_planet = Planets(body['name'], body['description'], body['climate'],
                             body['terrain'], body['population'], body['gravity'],
                             body['diameter'], body['user_id'])
       
         print(new_planet)
-        db.session.add(new_planet)  # Memoria RAM de SQLAlchemy
+        db.session.add(new_planet)  
         db.session.commit()
         return jsonify(new_planet.serialize()), 200
     except Exception as err:
@@ -99,7 +94,6 @@ def new_planet():
     
 @app.route('/people/<id>', methods=['GET'])
 def get_detailsPeople(id):
-    # body = request.json #lo que viene del request como un dic de python 🦎
     try:
         infoPeople = People.query.filter_by(id=id).one_or_none()
         people = infoPeople.serialize()
@@ -109,7 +103,6 @@ def get_detailsPeople(id):
 
 @app.route('/planets/<id>', methods=['GET'])
 def get_detailsPlanet(id):
-    # body = request.json #lo que viene del request como un dic de python 🦎
     try:
         infoPlanet = Planets.query.filter_by(id=id).one_or_none()
         planet = infoPlanet.serialize()
@@ -119,11 +112,11 @@ def get_detailsPlanet(id):
 
 @app.route('/favorito-people', methods=['POST'])
 def setFavoritoPeople():
-    body = request.json  # lo que viene del request como un dic de python 🦎
+    body = request.json  
     try:
         new_favoritoPeople = FavoritosPeople(body['people_id'], body['user_id'])
         print(new_favoritoPeople)
-        db.session.add(new_favoritoPeople)  # Memoria RAM de SQLAlchemy
+        db.session.add(new_favoritoPeople)  
         db.session.commit()
         return jsonify(new_favoritoPeople.serialize()), 200
     except Exception as err:
@@ -132,12 +125,12 @@ def setFavoritoPeople():
 
 @app.route('/favorito-people', methods=['DELETE'])
 def deleteFavoritoPeople():
-    body = request.json  # lo que viene del request como un dic de python 🦎
+    body = request.json  
     try:
         aux_favoritoPeople = FavoritosPeople.query.filter_by(
             people_id=body['people_id'], user_id=body['user_id']).one_or_none()
         print(aux_favoritoPeople)
-        db.session.delete(aux_favoritoPeople)  # Memoria RAM de SQLAlchemy
+        db.session.delete(aux_favoritoPeople)  
         db.session.commit()
         return jsonify(aux_favoritoPeople.serialize()), 200
     except Exception as err:
@@ -145,11 +138,11 @@ def deleteFavoritoPeople():
     
 @app.route('/favorito-planets', methods=['POST'])
 def setFavoritoPlanets():
-    body = request.json  # lo que viene del request como un dic de python 🦎
+    body = request.json  
     try:
         new_favoritoPlanet = FavoritosPlanets(body['planets_id'], body['user_id'])
         print(new_favoritoPlanet)
-        db.session.add(new_favoritoPlanet)  # Memoria RAM de SQLAlchemy
+        db.session.add(new_favoritoPlanet)  
         db.session.commit()
         return jsonify(new_favoritoPlanet.serialize()), 200
     except Exception as err:
@@ -158,17 +151,36 @@ def setFavoritoPlanets():
 
 @app.route('/favorito-planets', methods=['DELETE'])
 def deleteFavoritoPlanet():
-    body = request.json  # lo que viene del request como un dic de python 🦎
+    body = request.json  
     try:
         aux_favoritoPlanet = FavoritosPlanets.query.filter_by(
             planets_id=body['planets_id'], user_id=body['user_id']).one_or_none()
         print(aux_favoritoPlanet)
-        db.session.delete(aux_favoritoPlanet)  # Memoria RAM de SQLAlchemy
+        db.session.delete(aux_favoritoPlanet)  
         db.session.commit()
         return jsonify(aux_favoritoPlanet.serialize()), 200
     except Exception as err:
         return jsonify({"message": "Ah ocurrido un error inesperado ‼️" + str(err)}), 500
+    
+@app.route('/favorito-people/<idUser>', methods=['GET'])
+def get_AllFavoritosPeopleUser(idUser):
+    try:
+        listPeople = FavoritosPeople.query.filter_by(
+            user_id=idUser).all()
+        return jsonify([people.serialize() for people in listPeople]), 200
 
+    except Exception as err:
+        return jsonify({"message": "Ah ocurrido un error inesperado ‼️" + str(err)}), 500
+
+@app.route('/favorito-planets/<idUser>', methods=['GET'])
+def get_AllAllFavoritosPlanetsUser(idUser):
+    try:
+        listPlanets = FavoritosPlanets.query.filter_by(
+            user_id=idUser).all()
+        return jsonify([planet.serialize() for planet in listPlanets]), 200
+
+    except Exception as err:
+        return jsonify({"message": "Ah ocurrido un error inesperado ‼️" + str(err)}), 500
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
