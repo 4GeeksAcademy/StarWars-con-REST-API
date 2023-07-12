@@ -112,9 +112,35 @@ class FavoritosPeople(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("User.id"), nullable=False)
     creation_date = db.Column(db.DateTime, nullable=False)
 
+    def __init__(self, people_id, user_id):
+        self.people_id = people_id
+        self.user_id = user_id
+        self.creation_date = date.today()
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "people_id": self.people_id,
+            "user_id": self.user_id,
+            "creation_date": self.creation_date,
+        }
+
 class FavoritosPlanets(db.Model):
     __tablename__ = 'FavoritosPlanets'
     id = db.Column(db.Integer, primary_key=True)
     planets_id = db.Column(db.Integer, db.ForeignKey("Planets.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("User.id"), nullable=False)
     creation_date = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, planets_id, user_id):
+        self.planets_id = planets_id
+        self.user_id = user_id
+        self.creation_date = date.today()
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "planets_id": self.planets_id,
+            "user_id": self.user_id,
+            "creation_date": self.creation_date,
+        }
